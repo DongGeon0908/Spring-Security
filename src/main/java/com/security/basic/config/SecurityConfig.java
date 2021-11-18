@@ -2,7 +2,6 @@ package com.security.basic.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -10,13 +9,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -79,6 +78,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .exceptionHandling()
                 .accessDeniedHandler(accessDeniedHandler());
 
+        http
+                .sessionManagement()
+                .sessionFixation().changeSessionId()
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
+                .invalidSessionUrl("/")
+                .maximumSessions(1)
+                .maxSessionsPreventsLogin(false);
     }
 
     @Bean
